@@ -9,12 +9,19 @@ contract Notebook is ERC721 {
   bytes public data;
   uint256 public _totalSupply = 0;
   mapping (address => uint256) public donations;
+  uint256 public constant expectCreateNoteGasUsed = 117086;
 
   constructor(string memory name, string memory symbol) ERC721(name, symbol) {
     // initialize Notebook with total supply etc.
   }
 
+  receive() external payable {}
+
   function createNote(string memory content) external{
+    // calculate expect gasFee for user
+    uint256 gasFee = tx.gasprice * expectCreateNoteGasUsed;
+    // refund gas fee to user
+    payable(msg.sender).transfer(gasFee);
   }
 
   function mint(uint256 tokenId) external {
